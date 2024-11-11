@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  age String?
+  country String?
+  rentals Rental[]
+}
+ 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+}
+
+model Car {
+  id String @id @default(cuid())
+  productionYear Int
+  model String
+  price Int
+  description String
+  availibility Boolean //typo 
+  seats Int
+  horsePower Int
+  fuelUsage Float
+  image String?
+  rental Rental[]
+}
+
+model Rental {
+id String @id @default(cuid())
+userId String
+carId String
+startDate DateTime @default(now())
+endDate DateTime
+createdAt DateTime @default(now())
+age String?
+user User @relation(fields: [userId], references: [id])
+car Car @relation(fields: [carId], references: [id])
+}
